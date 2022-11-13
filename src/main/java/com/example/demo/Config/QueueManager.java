@@ -30,6 +30,7 @@ public class QueueManager implements Runnable{
         Thread thread = new Thread(this::run,"线程1");
         System.out.println(goodsService);
         System.out.println("添加阻塞队列成功");
+        System.out.println("third commit");
         // 开启线程
         thread.start();
     }
