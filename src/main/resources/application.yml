@@ -1,0 +1,70 @@
+server:
+  port: 9999
+
+spring:
+  redis:
+    # redis数据库索引(默认为0)，我们使用索引为3的数据库，避免和其他数据库冲突
+    database: 0
+    # redis服务器地址（默认为loaclhost）
+    host: 192.168.174.133
+    # redis端口（默认为6379）
+    port: 6379
+    # redis访问密码（默认为空）
+    password: 123456
+    # redis连接超时时间（单位毫秒）
+    timeout: 1800000
+    # redis连接池配置
+    pool:
+      # 最大可用连接数（默认为8，负数表示无限）
+      max-active: 8
+      # 最大空闲连接数（默认为8，负数表示无限）
+      max-idle: 8
+      # 最小空闲连接数（默认为0，该值只有为正数才有用）
+      min-idle: 0
+      # 从连接池中获取连接最大等待时间（默认为-1，单位为毫秒，负数表示无限）
+      max-wait: -1
+#  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3307/school?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT
+#    #url: jdbc:mysql://192.168.174.135:3306/school?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT
+#    username: root
+#    password: 111111
+
+#shardingjdbc分片策略
+  shardingsphere:
+    #配置数据源
+    datasource:
+      #给数据源取名称
+      names: db-1
+      #配置数据源具体内容
+      db-1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3307/school?useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        username: root
+        password: 111111
+        #指定goods表分布情况，配置表在哪个数据库里面，表名称都是什么
+    sharding:
+      tables:
+        goods:
+          actual-data-nodes: db-1.goods_$->{1..2}
+          #指定goods表里面主键gid生成策略
+          key-generator:
+            column: gid
+            type: SNOWFLAKE
+          #指定分片策略
+          table-strategy:
+            inline:
+              shardingColumn: gid
+              algorithm-expression: goods_$->{gid%2 + 1}
+    #打印sql
+    props:
+      sql:
+        show: true
+  main:
+    allow-bean-definition-overriding: true
+
+jwtutils:
+  refreshTokenTime: 5
+  tokenExpirationTime: 10
