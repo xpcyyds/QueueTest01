@@ -29,6 +29,7 @@ public class QueueManager implements Runnable{
         // 将任务对象传递给线程执行
         Thread thread = new Thread(this::run,"线程1");
         System.out.println(goodsService);
+        System.out.println("添加阻塞队列成功");
         // 开启线程
         thread.start();
     }
